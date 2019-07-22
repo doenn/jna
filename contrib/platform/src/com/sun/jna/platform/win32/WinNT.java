@@ -1,23 +1,23 @@
 /* Copyright (c) 2007 Timothy Wall, All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -170,6 +170,11 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     int THREAD_SET_LIMITED_INFORMATION = 0x0400;
     int THREAD_QUERY_LIMITED_INFORMATION = 0x0800;
     int THREAD_ALL_ACCESS = STANDARD_RIGHTS_REQUIRED | SYNCHRONIZE | 0x3FF;
+
+    /**
+     * Flag identifying hyperthreading / simultaneous multithreading (SMT)
+     */
+    int LTP_PC_SMT = 0x1;
 
     /**
      * The SECURITY_IMPERSONATION_LEVEL enumeration type contains values that
@@ -1704,73 +1709,73 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         public static final int WinBuiltinTerminalServerLicenseServersSid = 60;
 
         /**
-	 *
-	 */
+         *
+         */
         public static final int WinBuiltinDCOMUsersSid = 61;
 
         /**
-	 *
-	 */
+         *
+         */
         public static final int WinBuiltinIUsersSid = 62;
 
         /**
-	 *
-	 */
+         *
+         */
         public static final int WinIUserSid = 63;
 
         /**
-	 *
-	 */
+         *
+         */
         public static final int WinBuiltinCryptoOperatorsSid = 64;
 
         /**
-	 *
-	 */
+         *
+         */
         public static final int WinUntrustedLabelSid = 65;
 
         /**
-	 *
-	 */
+         *
+         */
         public static final int WinLowLabelSid = 66;
 
         /**
-	 *
-	 */
+         *
+         */
         public static final int WinMediumLabelSid = 67;
 
         /**
-	 *
-	 */
+         *
+         */
         public static final int WinHighLabelSid = 68;
 
         /**
-	 *
-	 */
+         *
+         */
         public static final int WinSystemLabelSid = 69;
 
         /**
-	 *
-	 */
+         *
+         */
         public static final int WinWriteRestrictedCodeSid = 70;
 
         /**
-	 *
-	 */
+         *
+         */
         public static final int WinCreatorOwnerRightsSid = 71;
 
         /**
-	 *
-	 */
+         *
+         */
         public static final int WinCacheablePrincipalsGroupSid = 72;
 
         /**
-	 *
-	 */
+         *
+         */
         public static final int WinNonCacheablePrincipalsGroupSid = 73;
 
         /**
-	 *
-	 */
+         *
+         */
         public static final int WinEnterpriseReadonlyControllersSid = 74;
 
         /**
@@ -2224,7 +2229,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     int SERVICE_INTERACTIVE_PROCESS = 0x00000100;
     int SERVICE_TYPE_ALL = SERVICE_WIN32 | SERVICE_ADAPTER | SERVICE_DRIVER
             | SERVICE_INTERACTIVE_PROCESS;
-    
+
     //
     // Start Type
     //
@@ -2242,7 +2247,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     int SERVICE_ERROR_NORMAL   = 0x00000001;
     int SERVICE_ERROR_SEVERE   = 0x00000002;
     int SERVICE_ERROR_CRITICAL = 0x00000003;
-    
+
     int STATUS_PENDING = 0x00000103;
 
     // Privilege Constants
@@ -2282,18 +2287,18 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     int SE_PRIVILEGE_REMOVED = 0X00000004;
     int SE_PRIVILEGE_USED_FOR_ACCESS = 0x80000000;
 
-	/** Required to create a process. */
-	int PROCESS_CREATE_PROCESS = 0x0080;
+    /** Required to create a process. */
+    int PROCESS_CREATE_PROCESS = 0x0080;
 
-	/** Required to create a thread. */
-	int PROCESS_CREATE_THREAD = 0x0002;
+    /** Required to create a thread. */
+    int PROCESS_CREATE_THREAD = 0x0002;
 
-	/**
-	 * Required to duplicate a handle using
-	 * {@link Kernel32#DuplicateHandle}
-	 * .
-	 */
-	int PROCESS_DUP_HANDLE = 0x0040;
+    /**
+     * Required to duplicate a handle using
+     * {@link Kernel32#DuplicateHandle}
+     * .
+     */
+    int PROCESS_DUP_HANDLE = 0x0040;
 
     /**
      * All possible access rights for a process object. Windows Server 2003 and
@@ -2331,76 +2336,76 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
             | WinNT.WRITE_OWNER
             | WinNT.SYNCHRONIZE;
 
-	/**
-	 * Required to retrieve certain information about a process, such as its
-	 * token, exit code, and priority class (see
-	 * {@link Advapi32#OpenProcessToken}).
-	 */
-	int PROCESS_QUERY_INFORMATION = 0x0400;
-
-	/**
-	 * Required to retrieve certain information about a process (see
-	 * {@link Kernel32#GetExitCodeProcess}
-	 * , {@code Kernel32#GetPriorityClass}, {@code Kernel32#IsProcessInJob},
-	 * {@code Kernel32.QueryFullProcessImageName}). A handle that has the
-	 * {@link #PROCESS_QUERY_INFORMATION} access right is automatically granted
-	 * {@link #PROCESS_QUERY_LIMITED_INFORMATION}.
-	 *
-	 * Windows Server 2003 and Windows XP: This access right is not supported.
-	 */
-	int PROCESS_QUERY_LIMITED_INFORMATION = 0x1000;
-
-	/**
-	 * Required to set certain information about a process, such as its priority
-	 * class (see {@code Kernel32#SetPriorityClass}).
-	 */
-	int PROCESS_SET_INFORMATION = 0x0200;
-
-	/**
-	 * Required to set memory limits using
-	 * {@code Kernel32.SetProcessWorkingSetSize()}.
-	 */
-	int PROCESS_SET_QUOTA = 0x0100;
-
-	/** Required to suspend or resume a process. */
-	int PROCESS_SUSPEND_RESUME = 0x0800;
-
-	/**
-	 * Required to terminate a process using
-	 * {@link Kernel32#TerminateProcess}.
-	 */
-	int PROCESS_TERMINATE = 0x00000001;
+    /**
+     * Required to retrieve certain information about a process, such as its
+     * token, exit code, and priority class (see
+     * {@link Advapi32#OpenProcessToken}).
+     */
+    int PROCESS_QUERY_INFORMATION = 0x0400;
 
     /**
-	 * Required for getting process exe path in native system path format
-	 * {@code Kernel32.QueryFullProcessImageName()}.
-	 */
-	int PROCESS_NAME_NATIVE = 0x00000001;
+     * Required to retrieve certain information about a process (see
+     * {@link Kernel32#GetExitCodeProcess}
+     * , {@code Kernel32#GetPriorityClass}, {@code Kernel32#IsProcessInJob},
+     * {@code Kernel32.QueryFullProcessImageName}). A handle that has the
+     * {@link #PROCESS_QUERY_INFORMATION} access right is automatically granted
+     * {@link #PROCESS_QUERY_LIMITED_INFORMATION}.
+     *
+     * Windows Server 2003 and Windows XP: This access right is not supported.
+     */
+    int PROCESS_QUERY_LIMITED_INFORMATION = 0x1000;
 
-	/**
-	 * Required to perform an operation on the address space of a process (see
-	 * {@code Kernel32.VirtualProtectEx()} and
-	 * {@link Kernel32#WriteProcessMemory}
-	 * ).
-	 */
-	int PROCESS_VM_OPERATION = 0x0008;
+    /**
+     * Required to set certain information about a process, such as its priority
+     * class (see {@code Kernel32#SetPriorityClass}).
+     */
+    int PROCESS_SET_INFORMATION = 0x0200;
 
-	/**
-	 * Required to read memory in a process using
-	 * {@link Kernel32#ReadProcessMemory}
-	 * .
-	 */
-	int PROCESS_VM_READ = 0x0010;
+    /**
+     * Required to set memory limits using
+     * {@code Kernel32.SetProcessWorkingSetSize()}.
+     */
+    int PROCESS_SET_QUOTA = 0x0100;
 
-	/**
-	 * Required to write to memory in a process using
-	 * {@link Kernel32#WriteProcessMemory}
-	 * .
-	 */
-	int PROCESS_VM_WRITE = 0x0020;
+    /** Required to suspend or resume a process. */
+    int PROCESS_SUSPEND_RESUME = 0x0800;
 
-	/** Required to wait for the process to terminate using the wait functions. */
-	int PROCESS_SYNCHRONIZE = 0x00100000;
+    /**
+     * Required to terminate a process using
+     * {@link Kernel32#TerminateProcess}.
+     */
+    int PROCESS_TERMINATE = 0x00000001;
+
+    /**
+     * Required for getting process exe path in native system path format
+     * {@code Kernel32.QueryFullProcessImageName()}.
+     */
+    int PROCESS_NAME_NATIVE = 0x00000001;
+
+    /**
+     * Required to perform an operation on the address space of a process (see
+     * {@code Kernel32.VirtualProtectEx()} and
+     * {@link Kernel32#WriteProcessMemory}
+     * ).
+     */
+    int PROCESS_VM_OPERATION = 0x0008;
+
+    /**
+     * Required to read memory in a process using
+     * {@link Kernel32#ReadProcessMemory}
+     * .
+     */
+    int PROCESS_VM_READ = 0x0010;
+
+    /**
+     * Required to write to memory in a process using
+     * {@link Kernel32#WriteProcessMemory}
+     * .
+     */
+    int PROCESS_VM_WRITE = 0x0020;
+
+    /** Required to wait for the process to terminate using the wait functions. */
+    int PROCESS_SYNCHRONIZE = 0x00100000;
 
     /* Security information types */
     int OWNER_SECURITY_INFORMATION = 0x00000001;
@@ -2503,11 +2508,11 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
         /**
          * Extract the contained ACEs from the ACL.
-         * 
+         *
          * <p>ACE types as decoded to their native JNA counterparts. ACE types,
-         * that are currently unsupported by JNA are returned as 
+         * that are currently unsupported by JNA are returned as
          * {@link WinNT.ACE_HEADER} objects.</p>
-         * 
+         *
          * @return array holding the contained ACEs
          */
         public ACE_HEADER[] getACEs() {
@@ -2598,11 +2603,11 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         }
 
         public PSID getOwner() {
-        	return OWNER;
+            return OWNER;
         }
 
         public PSID getGroup() {
-        	return GROUP;
+            return GROUP;
         }
 
         public ACL getDiscretionaryACL() {
@@ -2610,7 +2615,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         }
 
         public ACL getSystemACL() {
-        	return SACL;
+            return SACL;
         }
 
         private final void setMembers() {
@@ -2621,12 +2626,12 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
             if (Sacl != 0) {
                 SACL = new ACL(getPointer().share(Sacl));
             }
-        	if (Group != 0) {
-        		GROUP =  new PSID(getPointer().share(Group));
-        	}
-        	if (Owner != 0) {
-        		OWNER =  new PSID(getPointer().share(Owner));
-        	}
+            if (Group != 0) {
+                GROUP = new PSID(getPointer().share(Group));
+            }
+            if (Owner != 0) {
+                OWNER = new PSID(getPointer().share(Owner));
+            }
         }
     }
 
@@ -2902,6 +2907,387 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     }
 
     /**
+     * Contains information about the relationships of logical processors and
+     * related hardware. The {@link Kernel32#GetLogicalProcessorInformationEx}
+     * function uses this structure.
+     * <p>
+     * The native structure contains a union, which is mapped to JNA as
+     * subclasses.
+     */
+    @FieldOrder({ "relationship", "size" })
+    public abstract class SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX extends Structure {
+
+        /**
+         * The type of relationship between the logical processors. This
+         * parameter can be one of the following values:
+         * {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationCache},
+         * {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationGroup},
+         * {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationNumaNode},
+         * {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationProcessorCore}, or
+         * {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationProcessorPackage}.
+         * <p>
+         * This field identifies which subclass will be instantiated by the
+         * {@link #fromPointer(Pointer)} method.
+         */
+        public int /* LOGICAL_PROCESSOR_RELATIONSHIP */ relationship;
+
+        /**
+         * The size of the structure, in bytes.
+         */
+        public int size;
+
+        public SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX() {
+            super();
+        }
+
+        /**
+         * This constructor should only be called by a subclass to ensure memory
+         * is properly allocated to the subclass fields.
+         *
+         * @param memory
+         *            A pointer to the allocated native memory.
+         */
+        protected SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX(Pointer memory) {
+            super(memory);
+        }
+
+        /**
+         * Create a new instance of the appropriate subclass of
+         * {@link SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX} from the provided
+         * {@link Pointer} to native memory. Use this method rather than
+         * {@link #SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX(Pointer)} to properly
+         * cast the Pointer to the appropriate subclass and populate variable
+         * length arrays.
+         *
+         * @param memory
+         *            A pointer to allocated memory to be cast to this class.
+         * @return An instance of the appropriate subclass depending on the
+         *         value of the {@link #relationship} field. If the
+         *         {@link #relationship} member is
+         *         {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationProcessorCore}
+         *         or
+         *         {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationProcessorPackage},
+         *         the return type will be {@link PROCESSOR_RELATIONSHIP}. If
+         *         the {@link #relationship} member is
+         *         {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationNumaNode}, the
+         *         return type will be {@link NUMA_NODE_RELATIONSHIP}. If the
+         *         {@link #relationship} member is
+         *         {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationCache}, the
+         *         return type will be {@link CACHE_RELATIONSHIP}. If the
+         *         {@link #relationship} member is
+         *         {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationGroup}, the
+         *         return type will be {@link GROUP_RELATIONSHIP}.
+         */
+        public static SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX fromPointer(Pointer memory) {
+            int relationship = memory.getInt(0);
+            SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX result;
+            switch (relationship) {
+                case LOGICAL_PROCESSOR_RELATIONSHIP.RelationProcessorCore:
+                case LOGICAL_PROCESSOR_RELATIONSHIP.RelationProcessorPackage:
+                    result = new PROCESSOR_RELATIONSHIP(memory);
+                    break;
+                case LOGICAL_PROCESSOR_RELATIONSHIP.RelationNumaNode:
+                    result = new NUMA_NODE_RELATIONSHIP(memory);
+                    break;
+                case LOGICAL_PROCESSOR_RELATIONSHIP.RelationCache:
+                    result = new CACHE_RELATIONSHIP(memory);
+                    break;
+                case LOGICAL_PROCESSOR_RELATIONSHIP.RelationGroup:
+                    result = new GROUP_RELATIONSHIP(memory);
+                    break;
+                default:
+                    throw new IllegalStateException("Unmapped relationship: " + relationship);
+            }
+            result.read();
+            return result;
+        }
+    }
+
+    /**
+     * Describes the logical processors associated with either a processor core
+     * or a processor package.
+     */
+    @FieldOrder({ "flags", "efficiencyClass", "reserved", "groupCount", "groupMask" })
+    public static class PROCESSOR_RELATIONSHIP extends SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX {
+
+        /**
+         * If the {@link #relationship} member of the
+         * {@link SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX} structure is
+         * {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationProcessorCore}, this
+         * member is {@link #LTP_PC_SMT} if the core has more than one logical
+         * processor, or 0 if the core has one logical processor.
+         * <p>
+         * If the {@link #relationship} member of the
+         * {@link SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX} structure is
+         * {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationProcessorPackage}, this
+         * member is always 0.
+         */
+        public byte flags;
+
+        /**
+         * If the {@link #relationship} member of the
+         * {@link SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX} structure is
+         * {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationProcessorCore},
+         * EfficiencyClass specifies the intrinsic tradeoff between performance
+         * and power for the applicable core. A core with a higher value for the
+         * efficiency class has intrinsically greater performance and less
+         * efficiency than a core with a lower value for the efficiency class.
+         * EfficiencyClass is only nonzero on systems with a heterogeneous set
+         * of cores.
+         * <p>
+         * If the {@link #relationship} member of the
+         * {@link SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX} structure is
+         * {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationProcessorPackage},
+         * EfficiencyClass is always 0.
+         * <p>
+         * The minimum operating system version that supports this member is
+         * Windows 10.
+         */
+        public byte efficiencyClass;
+
+        /**
+         * This member is reserved.
+         */
+        public byte[] reserved = new byte[20];
+
+        /**
+         * This member specifies the number of entries in the GroupMask array.
+         * <p>
+         * If the PROCESSOR_RELATIONSHIP structure represents a processor core,
+         * the GroupCount member is always 1.
+         * <p>
+         * If the {@link PROCESSOR_RELATIONSHIP} structure represents a
+         * processor package, the {@link #groupCount} member is 1 only if all
+         * processors are in the same processor group. If the package contains
+         * more than one NUMA node, the system might assign different NUMA nodes
+         * to different processor groups. In this case, the {@link #groupCount}
+         * member is the number of groups to which NUMA nodes in the package are
+         * assigned.
+         */
+        public short groupCount;
+
+        /**
+         * An array of {@link GROUP_AFFINITY} structures. The
+         * {@link #groupCount} member specifies the number of structures in the
+         * array. Each structure in the array specifies a group number and
+         * processor affinity within the group.
+         */
+        public GROUP_AFFINITY[] groupMask = new GROUP_AFFINITY[1];
+
+        public PROCESSOR_RELATIONSHIP() {
+        }
+
+        public PROCESSOR_RELATIONSHIP(Pointer memory) {
+            super(memory);
+        }
+
+        @Override
+        public void read() {
+            readField("groupCount");
+            groupMask = new GROUP_AFFINITY[groupCount];
+            super.read();
+        }
+    }
+
+    /**
+     * Represents information about a NUMA node in a processor group.
+     */
+    @FieldOrder({ "nodeNumber", "reserved", "groupMask" })
+    public static class NUMA_NODE_RELATIONSHIP extends SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX {
+
+        /**
+         * Identifies the NUMA node. Valid values are {@code 0} to the highest
+         * NUMA node number inclusive. A non-NUMA multiprocessor system will
+         * report that all processors belong to one NUMA node.
+         */
+        public int nodeNumber;
+
+        /**
+         * This member is reserved.
+         */
+        public byte[] reserved = new byte[20];
+
+        /**
+         * A {@link GROUP_AFFINITY} structure that specifies a group number and
+         * processor affinity within the group.
+         */
+        public GROUP_AFFINITY groupMask;
+
+        public NUMA_NODE_RELATIONSHIP() {
+        }
+
+        public NUMA_NODE_RELATIONSHIP(Pointer memory) {
+            super(memory);
+        }
+    }
+
+    /**
+     * Describes cache attributes.
+     */
+    @FieldOrder({ "level", "associativity", "lineSize", "cacheSize", "type", "reserved", "groupMask" })
+    public static class CACHE_RELATIONSHIP extends SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX {
+
+        /**
+         * The cache level. This member can be 1 (L1), 2 (L2), 3 (L3), or 4
+         * (L4).
+         */
+        public byte level;
+
+        /**
+         * The cache associativity. If this member is
+         * {@link #CACHE_FULLY_ASSOCIATIVE}, the cache is fully associative.
+         */
+        public byte associativity;
+
+        /**
+         * The cache line size, in bytes.
+         */
+        public short lineSize;
+
+        /**
+         * The cache size, in bytes.
+         */
+        public int cacheSize;
+
+        /**
+         * The cache type. This member is a {@link PROCESSOR_CACHE_TYPE} value.
+         */
+        public int /* PROCESSOR_CACHE_TYPE */ type;
+
+        /**
+         * This member is reserved.
+         */
+        public byte[] reserved = new byte[20];
+
+        /**
+         * A {@link GROUP_AFFINITY} structure that specifies a group number and
+         * processor affinity within the group.
+         */
+        public GROUP_AFFINITY groupMask;
+
+        public CACHE_RELATIONSHIP() {
+        }
+
+        public CACHE_RELATIONSHIP(Pointer memory) {
+            super(memory);
+        }
+    }
+
+    /**
+     * Represents information about processor groups.
+     */
+    @FieldOrder({ "maximumGroupCount", "activeGroupCount", "reserved", "groupInfo" })
+    public static class GROUP_RELATIONSHIP extends SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX {
+
+        /**
+         * The maximum number of processor groups on the system.
+         */
+        public short maximumGroupCount;
+
+        /**
+         * The number of active groups on the system. This member indicates the
+         * number of {@link PROCESSOR_GROUP_INFO} structures in the GroupInfo
+         * array.
+         */
+        public short activeGroupCount;
+
+        /**
+         * This member is reserved.
+         */
+        public byte[] reserved = new byte[20];
+
+        /**
+         * An array of {@link PROCESSOR_GROUP_INFO} structures. The
+         * {@link #activeGroupCount} member specifies the number of structures
+         * in the array. Each structure in the array specifies the number and
+         * affinity of processors in an active group on the system.
+         */
+        public PROCESSOR_GROUP_INFO[] groupInfo = new PROCESSOR_GROUP_INFO[1];
+
+        public GROUP_RELATIONSHIP() {
+        }
+
+        public GROUP_RELATIONSHIP(Pointer memory) {
+            super(memory);
+        }
+
+        @Override
+        public void read() {
+            readField("activeGroupCount");
+            groupInfo = new PROCESSOR_GROUP_INFO[activeGroupCount];
+            super.read();
+        }
+    }
+
+    /**
+     * Represents a processor group-specific affinity, such as the affinity of a
+     * thread.
+     */
+    @FieldOrder({ "mask", "group", "reserved" })
+    public static class GROUP_AFFINITY extends Structure {
+
+        /**
+         * A bitmap that specifies the affinity for zero or more processors
+         * within the specified group.
+         */
+        public ULONG_PTR /* KAFFINITY */ mask;
+
+        /**
+         * The processor group number.
+         */
+        public short group;
+
+        /**
+         * This member is reserved.
+         */
+        public short[] reserved = new short[3];
+
+        public GROUP_AFFINITY(Pointer memory) {
+            super(memory);
+        }
+
+        public GROUP_AFFINITY() {
+            super();
+        }
+    }
+
+    /**
+     * Represents the number and affinity of processors in a processor group.
+     */
+    @FieldOrder({ "maximumProcessorCount", "activeProcessorCount", "reserved", "activeProcessorMask" })
+    public static class PROCESSOR_GROUP_INFO extends Structure {
+
+        /**
+         * The maximum number of processors in the group.
+         */
+        public byte maximumProcessorCount;
+
+        /**
+         * The number of active processors in the group.
+         */
+        public byte activeProcessorCount;
+
+        /**
+         * This member is reserved.
+         */
+        public byte[] reserved = new byte[38];
+
+        /**
+         * A bitmap that specifies the affinity for zero or more active
+         * processors within the group.
+         */
+        public ULONG_PTR /* KAFFINITY */ activeProcessorMask;
+
+        public PROCESSOR_GROUP_INFO(Pointer memory) {
+            super(memory);
+        }
+
+        public PROCESSOR_GROUP_INFO() {
+            super();
+        }
+    }
+
+    /**
      * Represents the relationship between the processor set identified in the corresponding
      * {@link SYSTEM_LOGICAL_PROCESSOR_INFORMATION} or <code>SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX</code> structure.
      */
@@ -3010,7 +3396,257 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     }
 
     /**
-     * Indicates committed pages for which physical storage has been allocated, either in memory or in the paging file on disk.
+     * Defines values that are used to specify system power action types.
+     */
+    public interface POWER_ACTION {
+        int PowerActionNone = 0;
+        int PowerActionReserved = 1;
+        int PowerActionSleep = 2;
+        int PowerActionHibernate = 3;
+        int PowerActionShutdown = 4;
+        int PowerActionShutdownReset = 5;
+        int PowerActionShutdownOff = 6;
+        int PowerActionWarmEject = 7;
+        int PowerActionDisplayOff = 8;
+    }
+
+    /**
+     * Defines values that are used to specify system power states.
+     */
+    public interface SYSTEM_POWER_STATE {
+        int PowerSystemUnspecified = 0;
+        int PowerSystemWorking = 1;
+        int PowerSystemSleeping1 = 2;
+        int PowerSystemSleeping2 = 3;
+        int PowerSystemSleeping3 = 4;
+        int PowerSystemHibernate = 5; // S4
+        int PowerSystemShutdown = 6; // S5
+        int PowerSystemMaximum = 7;
+    }
+
+    /**
+     * Contains information about the current state of the system battery.
+     */
+    @FieldOrder({ "AcOnLine", "BatteryPresent", "Charging", "Discharging", "Spare1", "Tag", "MaxCapacity",
+            "RemainingCapacity", "Rate", "EstimatedTime", "DefaultAlert1", "DefaultAlert2" })
+    class SYSTEM_BATTERY_STATE extends Structure {
+        public byte AcOnLine;
+        public byte BatteryPresent;
+        public byte Charging;
+        public byte Discharging;
+        public byte[] Spare1 = new byte[3];
+        public byte Tag;
+        public int MaxCapacity;
+        public int RemainingCapacity;
+        public int Rate;
+        public int EstimatedTime;
+        public int DefaultAlert1;
+        public int DefaultAlert2;
+
+        public SYSTEM_BATTERY_STATE(Pointer p) {
+            super(p);
+            read();
+        }
+
+        public SYSTEM_BATTERY_STATE() {
+            super();
+        }
+    }
+
+
+    /**
+     * Contains the granularity of the battery capacity.
+     */
+    @FieldOrder({ "Granularity", "Capacity" })
+    class BATTERY_REPORTING_SCALE extends Structure {
+        public int Granularity;
+        public int Capacity;
+    }
+
+    /**
+     * Contains information about a processor.
+     */
+    @FieldOrder({ "Number", "MaxMhz", "CurrentMhz", "MhzLimit", "MaxIdleState", "CurrentIdleState" })
+    class PROCESSOR_POWER_INFORMATION extends Structure {
+        public int Number;
+        public int MaxMhz;
+        public int CurrentMhz;
+        public int MhzLimit;
+        public int MaxIdleState;
+        public int CurrentIdleState;
+
+        public PROCESSOR_POWER_INFORMATION(Pointer p) {
+            super(p);
+            read();
+        }
+
+        public PROCESSOR_POWER_INFORMATION() {
+            super();
+        }
+    }
+
+    /**
+     * Contains information about the idleness of the system.
+     */
+    @FieldOrder({ "MaxIdlenessAllowed", "Idleness", "TimeRemaining", "CoolingMode" })
+    class SYSTEM_POWER_INFORMATION extends Structure {
+        public int MaxIdlenessAllowed;
+        public int Idleness;
+        public int TimeRemaining;
+        public byte CoolingMode;
+
+        public SYSTEM_POWER_INFORMATION(Pointer p) {
+            super(p);
+            read();
+        }
+
+        public SYSTEM_POWER_INFORMATION() {
+            super();
+        }
+    }
+
+    /**
+     * Contains information used to set the system power state.
+     */
+    @FieldOrder({ "Action", "Flags", "EventCode" })
+    class POWER_ACTION_POLICY extends Structure {
+        public int /* POWER_ACTION */ Action;
+        public int Flags;
+        public int EventCode;
+    }
+
+    /**
+     * Contains information about system battery drain policy settings.
+     */
+    @FieldOrder({ "Enable", "Spare", "BatteryLevel", "PowerPolicy", "MinSystemState" })
+    class SYSTEM_POWER_LEVEL extends Structure {
+        public byte Enable;
+        public byte[] Spare = new byte[3];
+        public int BatteryLevel;
+        public POWER_ACTION_POLICY PowerPolicy;
+        public int /* SYSTEM_POWER_STATE */ MinSystemState;
+    }
+
+    int NUM_DISCHARGE_POLICIES = 4;
+
+    /**
+     * Contains information about the current system power policy.
+     */
+    @FieldOrder({ "Revision", "PowerButton", "SleepButton", "LidClose", "LidOpenWake", "Reserved", "Idle",
+            "IdleTimeout", "IdleSensitivity", "DynamicThrottle", "Spare2", "MinSleep", "MaxSleep",
+            "ReducedLatencySleep", "WinLogonFlags", "Spare3", "DozeS4Timeout", "BroadcastCapacityResolution",
+            "DischargePolicy", "VideoTimeout", "VideoDimDisplay", "VideoReserved", "SpindownTimeout",
+            "OptimizeForPower", "FanThrottleTolerance", "ForcedThrottle", "MinThrottle", "OverThrottled" })
+    class SYSTEM_POWER_POLICY extends Structure {
+        public int Revision;
+        public POWER_ACTION_POLICY PowerButton;
+        public POWER_ACTION_POLICY SleepButton;
+        public POWER_ACTION_POLICY LidClose;
+        public int /* SYSTEM_POWER_STATE */ LidOpenWake;
+        public int Reserved;
+        public POWER_ACTION_POLICY Idle;
+        public int IdleTimeout;
+        public byte IdleSensitivity;
+        public byte DynamicThrottle;
+        public byte[] Spare2 = new byte[2];
+        public int /* SYSTEM_POWER_STATE */ MinSleep;
+        public int /* SYSTEM_POWER_STATE */ MaxSleep;
+        public int /* SYSTEM_POWER_STATE */ ReducedLatencySleep;
+        public int WinLogonFlags;
+        public int Spare3;
+        public int DozeS4Timeout;
+        public int BroadcastCapacityResolution;
+        public SYSTEM_POWER_LEVEL[] DischargePolicy = new SYSTEM_POWER_LEVEL[NUM_DISCHARGE_POLICIES];
+        public int VideoTimeout;
+        public byte VideoDimDisplay;
+        public int[] VideoReserved = new int[3];
+        public int SpindownTimeout;
+        public byte OptimizeForPower;
+        public byte FanThrottleTolerance;
+        public byte ForcedThrottle;
+        public byte MinThrottle;
+        public POWER_ACTION_POLICY OverThrottled;
+
+        public SYSTEM_POWER_POLICY(Pointer p) {
+            super(p);
+            read();
+        }
+
+        public SYSTEM_POWER_POLICY() {
+            super();
+        }
+    }
+
+    /**
+     * Contains information about the power capabilities of the system.
+     */
+    @FieldOrder({ "PowerButtonPresent", "SleepButtonPresent", "LidPresent", "SystemS1", "SystemS2", "SystemS3",
+            "SystemS4", "SystemS5", "HiberFilePresent", "FullWake", "VideoDimPresent", "ApmPresent", "UpsPresent",
+            "ThermalControl", "ProcessorThrottle", "ProcessorMinThrottle", "ProcessorMaxThrottle", "FastSystemS4",
+            "Hiberboot", "WakeAlarmPresent", "AoAc", "DiskSpinDown", "HiberFileType", "AoAcConnectivitySupported",
+            "spare3", "SystemBatteriesPresent", "BatteriesAreShortTerm", "BatteryScale", "AcOnLineWake", "SoftLidWake",
+            "RtcWake", "MinDeviceWakeState", "DefaultLowLatencyWake" })
+    class SYSTEM_POWER_CAPABILITIES extends Structure {
+        // Misc supported system features
+        public byte PowerButtonPresent;
+        public byte SleepButtonPresent;
+        public byte LidPresent;
+        public byte SystemS1;
+        public byte SystemS2;
+        public byte SystemS3;
+        public byte SystemS4; // hibernate
+        public byte SystemS5; // off
+        public byte HiberFilePresent;
+        public byte FullWake;
+        public byte VideoDimPresent;
+        public byte ApmPresent;
+        public byte UpsPresent;
+
+        // Processors
+        public byte ThermalControl;
+        public byte ProcessorThrottle;
+        public byte ProcessorMinThrottle;
+
+        // Prior to WinXP, next 5 bytes are ProcessorThrottleScale
+        // followed by 4 spare bytes
+        public byte ProcessorMaxThrottle;
+        public byte FastSystemS4;
+        public byte Hiberboot;
+        public byte WakeAlarmPresent;
+        public byte AoAc;
+
+        // Disk
+        public byte DiskSpinDown;
+
+        // HiberFile (Pre-Win10 next 2 bytes are spare)
+        public byte HiberFileType;
+        public byte AoAcConnectivitySupported;
+        public byte[] spare3 = new byte[6];
+
+        // System Battery
+        public byte SystemBatteriesPresent;
+        public byte BatteriesAreShortTerm;
+        public BATTERY_REPORTING_SCALE[] BatteryScale = new BATTERY_REPORTING_SCALE[3];
+
+        // Wake
+        public int /* SYSTEM_POWER_STATE */ AcOnLineWake;
+        public int /* SYSTEM_POWER_STATE */ SoftLidWake;
+        public int /* SYSTEM_POWER_STATE */ RtcWake;
+        public int /* SYSTEM_POWER_STATE */ MinDeviceWakeState;
+        public int /* SYSTEM_POWER_STATE */ DefaultLowLatencyWake;
+
+        public SYSTEM_POWER_CAPABILITIES(Pointer p) {
+            super(p);
+            read();
+        }
+
+        public SYSTEM_POWER_CAPABILITIES() {
+            super();
+        }
+    }
+    /**
+     * Indicates committed pages for which physical storage has been allocated,
+     * either in memory or in the paging file on disk.
      */
     int MEM_COMMIT = 0x1000;
 
@@ -3120,8 +3756,8 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         /**
          * Specifies whether the server may enable or disable privileges and
          * groups that the client's security context may include.
-         * 
-         * <p>This is a boolean value. See {@link WinNT#BOOLEAN_TRUE} and 
+         *
+         * <p>This is a boolean value. See {@link WinNT#BOOLEAN_TRUE} and
          * {@link WinNT#BOOLEAN_FALSE}.</p>
          */
         public byte EffectiveOnly;
@@ -3360,7 +3996,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
      *       +-----------------------+-------------------------+
      *        15                   10 9                       0   bit
      *  </pre>
-     * 
+     *
      *  <p>WARNING:  This pattern isn't always follows, Serbina, Bosnian &amp; Croation for example.</p>
      *
      *  <p>It is recommended that applications test for locale names or actual LCIDs.</p>
@@ -3380,9 +4016,9 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
      *   +-------------+---------+-------------------------+
      *    31         20 19     16 15                      0   bit
      * </pre>
-     * 
+     *
      * <p>WARNING: This pattern isn't always followed (es-ES_tradnl vs es-ES for example)</p>
-     * 
+     *
      * <p>It is recommended that applications test for locale names or actual LCIDs.</p>
      */
     public static final class LocaleMacros {
@@ -3392,7 +4028,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
         /**
          * construct the locale id from a language id and a sort id.
-         * 
+         *
          * @param lgid language id
          * @param srtid sort id
          * @return locale id derived from ldig and srtid
@@ -3403,7 +4039,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
         /**
          * construct the locale id from a language id, sort id, and sort version.
-         * 
+         *
          * @param lgid locale id
          * @param srtid sort id
          * @param ver sort version
@@ -3415,7 +4051,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
         /**
          * extract the language id from a locale id.
-         * 
+         *
          * @param lcid locale id
          * @return extracted language id
          */
@@ -3425,7 +4061,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
         /**
          * extract the sort id from a locale id.
-         * 
+         *
          * @param lcid locale id
          * @return extracted sort id
          */
@@ -3435,7 +4071,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
         /**
          * extract the sort version from a locale id.
-         * 
+         *
          * @param lcid locale id
          * @return extracted sort version
          */
@@ -3445,7 +4081,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
         /**
          * Construct language id from a primary language id and a sublanguage id.
-         * 
+         *
          * @param p primary language ID
          * @param s sublanguage ID
          * @return constructed language id
@@ -3456,7 +4092,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
         /**
          * Extract primary language id from a language id.
-         * 
+         *
          * @param lgid language ID
          * @return extracted primary language id
          */
@@ -3466,7 +4102,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
         /**
          * Extract sublanguage id from a language id.
-         * 
+         *
          * @param lgid language ID
          * @return extracted sublanguage id
          */

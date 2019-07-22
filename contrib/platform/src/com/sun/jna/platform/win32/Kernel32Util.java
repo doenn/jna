@@ -1,23 +1,23 @@
 /* Copyright (c) 2010, 2013 Daniel Doubrovkine, Markus Karg, All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -39,6 +39,8 @@ import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
+import com.sun.jna.platform.win32.WinNT.LOGICAL_PROCESSOR_RELATIONSHIP;
+import com.sun.jna.platform.win32.WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.W32APITypeMapper;
@@ -327,10 +329,8 @@ public abstract class Kernel32Util implements WinDef {
                         default:
                             throw new Win32Exception(rc);
                     }
-                // fall-thru
-
-            default:
-                return type;
+                default:
+                    return type;
             }
         } catch(Win32Exception e) {
             err = e;
@@ -423,7 +423,7 @@ public abstract class Kernel32Util implements WinDef {
         if (lpszEnvironmentBlock == null) {
             return null;
         }
-        
+
         Map<String,String>  vars=new TreeMap<String,String>();
         boolean             asWideChars=isWideCharEnvironmentStringBlock(lpszEnvironmentBlock, offset);
         long                stepFactor=asWideChars ? 2L : 1L;
@@ -670,11 +670,53 @@ public abstract class Kernel32Util implements WinDef {
             }
         }
         WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION firstInformation = new WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION(
-                memory);
+            memory);
         int returnedStructCount = bufferSize.getValue().intValue()
-                / sizePerStruct;
+            / sizePerStruct;
         return (WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION[]) firstInformation
-                .toArray(new WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION[0]);
+                .toArray(new WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION[returnedStructCount]);
+    }
+
+    /**
+     * Convenience method to get the processor information. Takes care of
+     * auto-growing the array and populating variable-length arrays in
+     * structures.
+     *
+     * @param relationshipType
+     *            The type of relationship to retrieve. This parameter can be
+     *            one of the following values:
+     *            {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationCache},
+     *            {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationGroup},
+     *            {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationNumaNode},
+     *            {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationProcessorCore},
+     *            {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationProcessorPackage},
+     *            or {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationAll}
+     * @return the array of processor information.
+     */
+    public static final SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX[] getLogicalProcessorInformationEx(
+            int relationshipType) {
+        WinDef.DWORDByReference bufferSize = new WinDef.DWORDByReference(new WinDef.DWORD(1));
+        Memory memory;
+        while (true) {
+            memory = new Memory(bufferSize.getValue().intValue());
+            if (!Kernel32.INSTANCE.GetLogicalProcessorInformationEx(relationshipType, memory, bufferSize)) {
+                int err = Kernel32.INSTANCE.GetLastError();
+                if (err != WinError.ERROR_INSUFFICIENT_BUFFER)
+                    throw new Win32Exception(err);
+            } else {
+                break;
+            }
+        }
+        // Array elements have variable size; iterate to populate array
+        List<SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX> procInfoList = new ArrayList<SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX>();
+        int offset = 0;
+        while (offset < bufferSize.getValue().intValue()) {
+            SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX information = SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX
+                    .fromPointer(memory.share(offset));
+            procInfoList.add(information);
+            offset += information.size;
+        }
+        return procInfoList.toArray(new SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX[0]);
     }
 
     /**
@@ -803,9 +845,9 @@ public abstract class Kernel32Util implements WinDef {
      */
     public static final String extractVolumeGUID(String volumeGUIDPath) {
         if ((volumeGUIDPath == null)
-         || (volumeGUIDPath.length() <= (VOLUME_GUID_PATH_PREFIX.length() + VOLUME_GUID_PATH_SUFFIX.length()))
-         || (!volumeGUIDPath.startsWith(VOLUME_GUID_PATH_PREFIX))
-         || (!volumeGUIDPath.endsWith(VOLUME_GUID_PATH_SUFFIX))) {
+            || (volumeGUIDPath.length() <= (VOLUME_GUID_PATH_PREFIX.length() + VOLUME_GUID_PATH_SUFFIX.length()))
+            || (!volumeGUIDPath.startsWith(VOLUME_GUID_PATH_PREFIX))
+            || (!volumeGUIDPath.endsWith(VOLUME_GUID_PATH_SUFFIX))) {
             throw new IllegalArgumentException("Bad volume GUID path format: " + volumeGUIDPath);
         }
 
@@ -1085,22 +1127,22 @@ public abstract class Kernel32Util implements WinDef {
             }
         }
     }
-    
+
     /**
      * Expands environment-variable strings and replaces them with the values
      * defined for the current user.
-     * 
+     *
      * @param input A string that contains one or more environment-variable
      *              strings in the form: %variableName%. For each such
      *              reference, the %variableName% portion is replaced with the
      *              current value of that environment variable.
      *
-     *              <p>Case is ignored when looking up the environment-variable 
-     *              name. If the name is not found, the %variableName% portion 
+     *              <p>Case is ignored when looking up the environment-variable
+     *              name. If the name is not found, the %variableName% portion
      *              is left unexpanded.</p>
-     * 
+     *
      *              <p>Note that this function does not support all the features
-     *              that Cmd.exe supports. For example, it does not support 
+     *              that Cmd.exe supports. For example, it does not support
      *              %variableName:str1=str2% or %variableName:~offset,length%.</p>
      *
      * @return the replaced string
@@ -1110,13 +1152,13 @@ public abstract class Kernel32Util implements WinDef {
         if(input == null) {
             return "";
         }
-        
+
         int resultChars = Kernel32.INSTANCE.ExpandEnvironmentStrings(input, null, 0);
-        
+
         if(resultChars == 0) {
             throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
         }
-        
+
         Memory resultMemory;
         if( W32APITypeMapper.DEFAULT == W32APITypeMapper.UNICODE ) {
             resultMemory = new Memory(resultChars * Native.WCHAR_SIZE);
@@ -1127,11 +1169,11 @@ public abstract class Kernel32Util implements WinDef {
             resultMemory = new Memory(resultChars + 1);
         }
         resultChars = Kernel32.INSTANCE.ExpandEnvironmentStrings(input, resultMemory, resultChars);
-        
+
         if(resultChars == 0) {
             throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
         }
-        
+
         if( W32APITypeMapper.DEFAULT == W32APITypeMapper.UNICODE ) {
             return resultMemory.getWideString(0);
         } else {

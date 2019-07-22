@@ -1,23 +1,23 @@
 /* Copyright (c) 2007, 2013 Timothy Wall, Markus Karg, All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -31,6 +31,7 @@ import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
+
 
 /**
  * Provides access to the w32 user32 library. Incomplete implementation to
@@ -205,24 +206,24 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
     boolean GetWindowRect(HWND hWnd, RECT rect);
 
     /**
-     * This function retrieves the coordinates of a window's client area. 
-     * The client coordinates specify the upper-left and lower-right corners of the 
-     * client area. Because client coordinates are relative to the upper-left 
-     * corner of a window's client area, the coordinates of the upper-left corner 
+     * This function retrieves the coordinates of a window's client area.
+     * The client coordinates specify the upper-left and lower-right corners of the
+     * client area. Because client coordinates are relative to the upper-left
+     * corner of a window's client area, the coordinates of the upper-left corner
      * are (0,0).
      *
      * @param hWnd
      *            Handle to the window.
      * @param rect
-     *            Long pointer to a RECT structure that structure that receives 
-     *            the client coordinates. The left and top members are zero. The 
-     *            right and bottom members contain the width and height of the 
+     *            Long pointer to a RECT structure that structure that receives
+     *            the client coordinates. The left and top members are zero. The
+     *            right and bottom members contain the width and height of the
      *            window.
      * @return If the function succeeds, the return value is nonzero. If the
      *         function fails, the return value is zero.
      */
     boolean GetClientRect(HWND hWnd, RECT rect);
-    
+
     /**
      * This function copies the text of the specified window's title bar - if it
      * has one - into a buffer. If the specified window is a control, the text
@@ -825,43 +826,43 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
     /**
      * Posts a message to the message queue of the specified thread. It returns
      * without waiting for the thread to process the message.
-     * 
-     * @param idThread The identifier of the thread to which the message is to 
+     *
+     * @param idThread The identifier of the thread to which the message is to
      * be posted.
-     * 
-     * <p>The function fails if the specified thread does not have a 
+     *
+     * <p>The function fails if the specified thread does not have a
      * message queue. The system creates a thread's message queue when the
      * thread makes its first call to one of the User or GDI functions.</p>
-     * 
-     * <p>Message posting is subject to UIPI. The thread of a process can post 
+     *
+     * <p>Message posting is subject to UIPI. The thread of a process can post
      * messages only to posted-message queues of threads in processes of lesser
      * or equal integrity level.</p>
-     * 
+     *
      * <p>This thread must have the SE_TCB_NAME privilege to post a message to a
      * thread that belongs to a process with the same locally unique identifier
      * (LUID) but is in a different desktop. Otherwise, the function fails
      * and returns ERROR_INVALID_THREAD_ID.</p>
-     * 
-     * <p>This thread must either belong to the same desktop as the calling 
+     *
+     * <p>This thread must either belong to the same desktop as the calling
      * thread or to a process with the same LUID. Otherwise, the function
      * fails and returns ERROR_INVALID_THREAD_ID.</p>
-     * 
+     *
      * @param Msg The type of message to be posted.
      *
      * @param wParam Additional message-specific information.
-     * 
+     *
      * @param lParam Additional message-specific information.
-     * 
+     *
      * @return If the function succeeds, the return value is nonzero.
-     * 
+     *
      * <p>If the function fails, the return value is zero. To get extended error
-     * information, call GetLastError.</p><p>GetLastError returns 
+     * information, call GetLastError.</p><p>GetLastError returns
      * ERROR_INVALID_THREAD_ID if idThread is not a valid thread identifier, or
      * if the thread specified by idThread does not have a message queue.</p>
      * <p>GetLastError returns ERROR_NOT_ENOUGH_QUOTA when the message limit is hit.</p>
      */
     int PostThreadMessage(int  idThread, int  Msg, WPARAM wParam,  LPARAM lParam);
-    
+
     /**
      * This function indicates to Windows that a thread has made a request to
      * terminate (quit). It is typically used in response to a WM_DESTROY
@@ -1717,7 +1718,7 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      *         </p>
      */
     int RegisterWindowMessage(String string);
-    
+
     /**
      * Retrieves a handle to the display monitor that contains a specified point.
      * @param pt A POINT structure that specifies the point of interest in virtual-screen
@@ -2036,8 +2037,8 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      *         Windows 2000: If {@link Kernel32#GetLastError()} returns 0, then
      *         the function timed out.
      */
-        LRESULT SendMessageTimeout(HWND hWnd, int msg, WPARAM wParam, LPARAM lParam,
-            int fuFlags, int uTimeout, DWORDByReference lpdwResult);
+    LRESULT SendMessageTimeout(HWND hWnd, int msg, WPARAM wParam, LPARAM lParam,
+        int fuFlags, int uTimeout, DWORDByReference lpdwResult);
 
     /**
      * Retrieves the specified value from the WNDCLASSEX structure associated
@@ -2431,58 +2432,284 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      *         error information, call GetLastError.<br>
      */
     int GetClassLong(HWND hWnd, int nIndex);
-    
+
     /**
-     * Registers a new clipboard format. This format can then be used as a 
-     * valid clipboard format. 
-     * 
-     * @param formatName The name of the new format. 
-     * 
-     * @return If the function succeeds, the return value identifies the 
+     * Registers a new clipboard format. This format can then be used as a
+     * valid clipboard format.
+     *
+     * @param formatName The name of the new format.
+     *
+     * @return If the function succeeds, the return value identifies the
      * registered clipboard format.
-     * 
+     *
      * <p> If the function fails, the return value is zero. To get extended
      * error information, call GetLastError.</p>
      */
     public int RegisterClipboardFormat(String formatName);
-    
+
     /**
-     * Retrieves the window handle to the active window attached to the 
+     * Retrieves the window handle to the active window attached to the
      * calling thread's message queue.
-     * 
-     * @return Type: HWND The return value is the handle to the active 
-     * window attached to the calling thread's message queue. Otherwise, 
+     *
+     * @return Type: HWND The return value is the handle to the active
+     * window attached to the calling thread's message queue. Otherwise,
      * the return value is NULL.
      */
     public HWND GetActiveWindow();
-  
-	/**
-	 * Sends the specified message to a window or windows. 
-	 * The SendMessage function calls the window procedure for the specified window and 
-	 * does not return until the window procedure has processed the message.
-	 * 
- 	 * To send a message and return immediately, use the SendMessageCallback or SendNotifyMessage function. 
- 	 * To post a message to a thread's message queue and return immediately, 
- 	 * use the PostMessage or PostThreadMessage function.
-	 * 
-	 * @param hWnd A handle to the window whose window procedure will receive the message. 
-	 * 		If this parameter is HWND_BROADCAST ((HWND)0xffff), the message is sent to all 
-	 * 		top-level windows in the system, including disabled or invisible unowned windows, 
-	 * 		overlapped windows, and pop-up windows; but the message is not sent to child windows.
-	 * 		Message sending is subject to UIPI. The thread of a process can send messages 
-	 * 		only to message queues of threads in processes of lesser or equal integrity level.
-	 * 
-	 * @param msg The message to be sent.
-	 * 		For lists of the system-provided messages, see System-Defined Messages.
-	 * @param wParam Additional message-specific information.
-	 * @param lParam Additional message-specific information.
-	 * 
-	 * @return The return value specifies the result of the message processing; it depends on the message sent.
-	 * 
-	 * Two classic usage : 
-	 *  - with a WM_USER+x msg value : wParam and lParam are numeric values
-	 *  - with a WM_COPYDATA msg value : wParam is the length of the structure and lParam a pointer to a COPYDATASTRUCT 
-	 */
+
+    /**
+     * Sends the specified message to a window or windows.
+     * The SendMessage function calls the window procedure for the specified window and
+     * does not return until the window procedure has processed the message.
+     *
+      * To send a message and return immediately, use the SendMessageCallback or SendNotifyMessage function.
+      * To post a message to a thread's message queue and return immediately,
+      * use the PostMessage or PostThreadMessage function.
+     *
+     * @param hWnd A handle to the window whose window procedure will receive the message.
+     *         If this parameter is HWND_BROADCAST ((HWND)0xffff), the message is sent to all
+     *         top-level windows in the system, including disabled or invisible unowned windows,
+     *         overlapped windows, and pop-up windows; but the message is not sent to child windows.
+     *         Message sending is subject to UIPI. The thread of a process can send messages
+     *         only to message queues of threads in processes of lesser or equal integrity level.
+     *
+     * @param msg The message to be sent.
+     *         For lists of the system-provided messages, see System-Defined Messages.
+     * @param wParam Additional message-specific information.
+     * @param lParam Additional message-specific information.
+     *
+     * @return The return value specifies the result of the message processing; it depends on the message sent.
+     *
+     * Two classic usage :
+     *  - with a WM_USER+x msg value : wParam and lParam are numeric values
+     *  - with a WM_COPYDATA msg value : wParam is the length of the structure and lParam a pointer to a COPYDATASTRUCT
+     */
     LRESULT SendMessage(HWND hWnd, int msg, WPARAM wParam, LPARAM lParam);
-	
+
+    /**
+     * Retrieves the input locale identifiers (formerly called keyboard layout
+     * handles) corresponding to the current set of input locales in the system. The
+     * function copies the identifiers to the specified buffer.
+     *
+     * @param nBuff  The maximum number of handles that the buffer can hold.
+     * @param lpList A pointer to the buffer that receives the array of input locale
+     *               identifiers.
+     * @return If the function succeeds, the return value is the number of input
+     *         locale identifiers copied to the buffer or, if nBuff is zero, the
+     *         return value is the size, in array elements, of the buffer needed to
+     *         receive all current input locale identifiers. If the function fails,
+     *         the return value is zero. To get extended error information, call
+     *         GetLastError.
+     */
+    int GetKeyboardLayoutList(int nBuff, HKL[] lpList);
+
+    /**
+     * Retrieves the active input locale identifier (formerly called the keyboard
+     * layout).
+     *
+     * @param idThread The identifier of the thread to query, or 0 for the current
+     *                 thread.
+     * @return The return value is the input locale identifier for the thread. The
+     *         low word contains a Language Identifier for the input language and
+     *         the high word contains a device handle to the physical layout of the
+     *         keyboard.
+     */
+    HKL GetKeyboardLayout(int idThread);
+
+    /**
+     * This function retrieves the name of the active keyboard layout.
+     *
+     * @param pwszKLID [in] Pointer to the buffer of at least {@link #KL_NAMELENGTH}
+     *                 characters that is to receive the name of the keyboard
+     *                 layout, including the terminating null character.
+     * @return Nonzero indicates success. Zero indicates failure. To get extended
+     *         error information, call GetLastError.
+     */
+    boolean GetKeyboardLayoutName(char[] pwszKLID);
+
+    /**
+     * Translates a character to the corresponding virtual-key code and shift state.
+     * The function translates the character using the input language and physical
+     * keyboard layout identified by the input locale identifier.
+     *
+     * @param ch    The character to be translated into a virtual-key code.
+     * @param dwhkl Input locale identifier to use for translating the specified
+     *              code. This parameter can be any input locale identifier
+     *              previously returned by the #LoadKeyboardLayout()
+     *              function.
+     * @return If the function succeeds, the low-order byte of the return value
+     *         contains the virtual-key code and the high-order byte contains the
+     *         shift state, which can be a combination of the following flag bits.
+     *         <dl>
+     *         <dt>1</dt>
+     *         <dd>Either SHIFT key is pressed. Use
+     *         {@link WinUser#MODIFIER_SHIFT_MASK}.</dd>
+     *         <dt>2</dt>
+     *         <dd>Either CTRL key is pressed. Use
+     *         {@link WinUser#MODIFIER_CTRL_MASK}.</dd>
+     *         <dt>4</dt>
+     *         <dd>Either ALT key is pressed. Use
+     *         {@link WinUser#MODIFIER_ALT_MASK}.</dd>
+     *         <dt>8</dt>
+     *         <dd>The Hankaku key is pressed. Use
+     *         {@link WinUser#MODIFIER_HANKAKU_MASK}.</dd>
+     *         <dt>16</dt>
+     *         <dd>Reserved (defined by the keyboard layout driver). Use
+     *         {@link WinUser#MODIFIER_RESERVED1_MASK}.</dd>
+     *         <dt>32</dt>
+     *         <dd>Reserved (defined by the keyboard layout driver). Use
+     *         {@link WinUser#MODIFIER_RESERVED2_MASK}.</dd>
+     *         </dl>
+     *         If the function finds no key that translates to the passed character
+     *         code, both the low-order and high-order bytes contain -1.
+     */
+    short VkKeyScanExA(byte ch, HKL dwhkl);
+
+    /**
+     * Translates a character to the corresponding virtual-key code and shift state.
+     * The function translates the character using the input language and physical
+     * keyboard layout identified by the input locale identifier.
+     *
+     * @param ch    The character to be translated into a virtual-key code.
+     * @param dwhkl Input locale identifier to use for translating the specified
+     *              code. This parameter can be any input locale identifier
+     *              previously returned by the #LoadKeyboardLayout()
+     *              function.
+     * @return If the function succeeds, the low-order byte of the return value
+     *         contains the virtual-key code and the high-order byte contains the
+     *         shift state, which can be a combination of the following flag bits.
+     *         <dl>
+     *         <dt>1</dt>
+     *         <dd>Either SHIFT key is pressed. Use
+     *         {@link WinUser#MODIFIER_SHIFT_MASK}.</dd>
+     *         <dt>2</dt>
+     *         <dd>Either CTRL key is pressed. Use
+     *         {@link WinUser#MODIFIER_CTRL_MASK}.</dd>
+     *         <dt>4</dt>
+     *         <dd>Either ALT key is pressed. Use
+     *         {@link WinUser#MODIFIER_ALT_MASK}.</dd>
+     *         <dt>8</dt>
+     *         <dd>The Hankaku key is pressed. Use
+     *         {@link WinUser#MODIFIER_HANKAKU_MASK}.</dd>
+     *         <dt>16</dt>
+     *         <dd>Reserved (defined by the keyboard layout driver). Use
+     *         {@link WinUser#MODIFIER_RESERVED1_MASK}.</dd>
+     *         <dt>32</dt>
+     *         <dd>Reserved (defined by the keyboard layout driver). Use
+     *         {@link WinUser#MODIFIER_RESERVED2_MASK}.</dd>
+     *         </dl>
+     *         If the function finds no key that translates to the passed character
+     *         code, both the low-order and high-order bytes contain -1.
+     */
+    short VkKeyScanExW(char ch, HKL dwhkl);
+
+    /**
+     * Translates (maps) a virtual-key code into a scan code or character value, or
+     * translates a scan code into a virtual-key code. The function translates the
+     * codes using the input language and an input locale identifier.
+     *
+     * @param uCode    The virtual-key code or scan code for a key. How this value
+     *                 is interpreted depends on the value of the uMapType
+     *                 parameter. Starting with Windows Vista, the high byte of the
+     *                 uCode value can contain either 0xe0 or 0xe1 to specify the
+     *                 extended scan code.
+     * @param uMapType The translation to perform. The value of this parameter
+     *                 depends on the value of the uCode parameter. One of
+     *                 {@link WinUser#MAPVK_VK_TO_CHAR},
+     *                 {@link WinUser#MAPVK_VK_TO_VSC},
+     *                 {@link WinUser#MAPVK_VK_TO_VSC_EX},
+     *                 {@link WinUser#MAPVK_VSC_TO_VK},
+     *                 {@link WinUser#MAPVK_VSC_TO_VK_EX}
+     *
+     * @param dwhkl    Input locale identifier to use for translating the specified
+     *                 code. This parameter can be any input locale identifier
+     *                 previously returned by the #LoadKeyboardLayout()
+     *                 function.
+     * @return The return value is either a scan code, a virtual-key code, or a
+     *         character value, depending on the value of uCode and uMapType. If
+     *         there is no translation, the return value is zero.
+     */
+    int MapVirtualKeyEx(int uCode, int uMapType, HKL dwhkl);
+
+    /**
+     * Translates the specified virtual-key code and keyboard state to the
+     * corresponding Unicode character or characters.
+     *
+     * @param wVirtKey   The virtual-key code to be translated.
+     * @param wScanCode  The hardware scan code of the key to be translated. The
+     *                   high-order bit of this value is set if the key is up.
+     * @param lpKeyState A pointer to a 256-byte array that contains the current
+     *                   keyboard state. Each element (byte) in the array contains
+     *                   the state of one key. If the high-order bit of a byte is
+     *                   set, the key is down.
+     * @param pwszBuff   The buffer that receives the translated Unicode character
+     *                   or characters. However, this buffer may be returned without
+     *                   being null-terminated even though the variable name
+     *                   suggests that it is null-terminated.
+     * @param cchBuff    The size, in characters, of the buffer pointed to by the
+     *                   pwszBuff parameter.
+     * @param wFlags     The behavior of the function. If bit 0 is set, a menu is
+     *                   active. If bit 2 is set, keyboard state is not changed
+     *                   (Windows 10, version 1607 and newer) All other bits
+     *                   (through 31) are reserved.
+     * @param dwhkl      Input locale identifier to use for translating the
+     *                   specified code. This parameter can be any input locale
+     *                   identifier previously returned by the
+     *                   #LoadKeyboardLayout() function.
+     * @return The function returns one of the following values.
+     *         <dl>
+     *         <dt>-1</dt>
+     *         <dd>The specified virtual key is a dead-key character (accent or
+     *         diacritic). This value is returned regardless of the keyboard layout,
+     *         even if several characters have been typed and are stored in the
+     *         keyboard state. If possible, even with Unicode keyboard layouts, the
+     *         function has written a spacing version of the dead-key character to
+     *         the buffer specified by pwszBuff. For example, the function writes
+     *         the character SPACING ACUTE (0x00B4), rather than the character
+     *         NON_SPACING ACUTE (0x0301).</dd>
+     *         <dt>0</dt>
+     *         <dd>The specified virtual key has no translation for the current
+     *         state of the keyboard. Nothing was written to the buffer specified by
+     *         pwszBuff.</dd>
+     *         <dt>1</dt>
+     *         <dd>One character was written to the buffer specified by
+     *         pwszBuff.</dd>
+     *         <dt>2&le;value</dt>
+     *         <dd>Two or more characters were written to the buffer specified by
+     *         pwszBuff. The most common cause for this is that a dead-key character
+     *         (accent or diacritic) stored in the keyboard layout could not be
+     *         combined with the specified virtual key to form a single character.
+     *         However, the buffer may contain more characters than the return value
+     *         specifies. When this happens, any extra characters are invalid and
+     *         should be ignored.</dd>
+     *         </dl>
+     *
+     */
+    int ToUnicodeEx(int wVirtKey, int wScanCode, byte[] lpKeyState, char[] pwszBuff, int cchBuff, int wFlags,
+            HKL dwhkl);
+
+    /**
+     * Loads a string resource from the executable file associated with a specified
+     * module, copies the string into a buffer, and appends a terminating null
+     * character.
+     *
+     * @param hInstance    A handle to an instance of the module whose executable
+     *                     file contains the string resource. To get the handle to
+     *                     the application itself, call the GetModuleHandle function
+     *                     with NULL.
+     * @param uID          The identifier of the string to be loaded.
+     * @param lpBuffer     The buffer is to receive the string. Must be of
+     *                     sufficient length to hold a pointer (8 bytes).
+     * @param cchBufferMax The size of the buffer, in characters. The string is
+     *                     truncated and null-terminated if it is longer than the
+     *                     number of characters specified. If this parameter is 0,
+     *                     then lpBuffer receives a read-only pointer to the
+     *                     resource itself.
+     * @return If the function succeeds, the return value is the number of
+     *         characters copied into the buffer, not including the terminating null
+     *         character, or zero if the string resource does not exist. To get
+     *         extended error information, call GetLastError.
+     *
+     */
+    int LoadString(HINSTANCE hInstance, int uID, Pointer lpBuffer, int cchBufferMax);
 }

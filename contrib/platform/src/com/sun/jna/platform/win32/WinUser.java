@@ -1,30 +1,27 @@
 /* Copyright (c) 2010 Daniel Doubrovkine, All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
 package com.sun.jna.platform.win32;
-
-import java.util.Arrays;
-import java.util.List;
 
 import com.sun.jna.Callback;
 import com.sun.jna.Native;
@@ -33,6 +30,7 @@ import com.sun.jna.Structure;
 import com.sun.jna.Structure.FieldOrder;
 import com.sun.jna.Union;
 import com.sun.jna.platform.win32.BaseTSD.ULONG_PTR;
+import com.sun.jna.platform.win32.WinDef.HKL;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.win32.StdCallLibrary.StdCallCallback;
 import com.sun.jna.win32.W32APITypeMapper;
@@ -338,20 +336,20 @@ public interface WinUser extends WinDef {
     @FieldOrder({"dwData", "cbData", "lpData"})
     public class COPYDATASTRUCT extends Structure {
 
-		public COPYDATASTRUCT() {
-			super();
-		}
+        public COPYDATASTRUCT() {
+            super();
+        }
 
-		public COPYDATASTRUCT(Pointer p) {
-			super(p);
-			//Receiving data and read it from native memory to fill the structure.
-			read();
-		}
+        public COPYDATASTRUCT(Pointer p) {
+            super(p);
+            //Receiving data and read it from native memory to fill the structure.
+            read();
+        }
 
-		public ULONG_PTR dwData;
-		public int cbData;
-		public Pointer lpData;
-	}
+        public ULONG_PTR dwData;
+        public int cbData;
+        public Pointer lpData;
+    }
 
     @FieldOrder({"cbSize", "hWnd", "dwFlags", "uCount", "dwTimeout"})
     public class FLASHWINFO extends Structure {
@@ -486,20 +484,20 @@ public interface WinUser extends WinDef {
     @FieldOrder({"lParam", "wParam", "message", "hwnd"})
     public class CWPSTRUCT extends Structure {
 
-    	public CWPSTRUCT() {
-    		super();
-		}
+        public CWPSTRUCT() {
+            super();
+        }
 
-		public CWPSTRUCT(Pointer p) {
-			super(p);
-			//Receiving data and read it from native memory to fill the structure.
-			read();
-		}
+        public CWPSTRUCT(Pointer p) {
+            super(p);
+            //Receiving data and read it from native memory to fill the structure.
+            read();
+        }
 
-		public LPARAM lParam;
-		public WPARAM wParam;
-		public int message;
-		public HWND hwnd;
+        public LPARAM lParam;
+        public WPARAM wParam;
+        public int message;
+        public HWND hwnd;
     }
 
     /**
@@ -565,13 +563,13 @@ public interface WinUser extends WinDef {
      * associated with the thread that registered the hot key.
      */
     int WM_HOTKEY = 0x0312;
-    
+
     /**
      * Used to define private messages for use by private window classes,
      * usually of the form WM_USER+x, where x is an integer value.
      */
     int WM_USER = 0x0400;
-    
+
     /**
      * An application sends the WM_COPYDATA message to pass data to another application.
      */
@@ -817,86 +815,86 @@ public interface WinUser extends WinDef {
     int GW_ENABLEDPOPUP = 6;
 
     /**
-     * If the calling thread and the thread that owns the window are attached 
-     * to different input queues, the system posts the request to the thread 
-     * that owns the window. This prevents the calling thread from blocking 
+     * If the calling thread and the thread that owns the window are attached
+     * to different input queues, the system posts the request to the thread
+     * that owns the window. This prevents the calling thread from blocking
      * its execution while other threads process the request.
      */
-    int SWP_ASYNCWINDOWPOS = 0x4000; 
-    		
+    int SWP_ASYNCWINDOWPOS = 0x4000;
+
     /**
      * Prevents generation of the WM_SYNCPAINT message.
      */
     int SWP_DEFERERASE = 0x2000;
-    
+
     /**
      * Draws a frame (defined in the window's class description) around the window.
      */
     int SWP_DRAWFRAME = 0x0020;
-    
+
     /**
-     * Applies new frame styles set using the SetWindowLong function. Sends 
-     * a WM_NCCALCSIZE message to the window, even if the window's size is 
-     * not being changed. If this flag is not specified, WM_NCCALCSIZE is 
+     * Applies new frame styles set using the SetWindowLong function. Sends
+     * a WM_NCCALCSIZE message to the window, even if the window's size is
+     * not being changed. If this flag is not specified, WM_NCCALCSIZE is
      * sent only when the window's size is being changed.
      */
     int SWP_FRAMECHANGED = 0x0020;
-    
+
     /**
      * Hides the window.
      */
     int SWP_HIDEWINDOW = 0x0080;
-    
+
     /**
-     * Does not activate the window. If this flag is not set, the window is 
-     * activated and moved to the top of either the topmost or non-topmost 
+     * Does not activate the window. If this flag is not set, the window is
+     * activated and moved to the top of either the topmost or non-topmost
      * group (depending on the setting of the hWndInsertAfter parameter).
      */
     int SWP_NOACTIVATE = 0x0010;
-    
+
     /**
-     * Discards the entire contents of the client area. If this flag is not 
-     * specified, the valid contents of the client area are saved and copied 
+     * Discards the entire contents of the client area. If this flag is not
+     * specified, the valid contents of the client area are saved and copied
      * back into the client area after the window is sized or repositioned.
      */
     int SWP_NOCOPYBITS = 0x0100;
-    
+
     /**
      * Retains the current position (ignores X and Y parameters).
      */
     int SWP_NOMOVE = 0x0002;
-    
+
     /**
      * Does not change the owner window's position in the Z order.
      */
     int SWP_NOOWNERZORDER = 0x0200;
-    
+
     /**
      * Does not redraw changes. If this flag is set, no repainting of any kind
      *  occurs. This applies to the client area, the nonclient area (including
-     *   the title bar and scroll bars), and any part of the parent window 
-     *   uncovered as a result of the window being moved. When this flag is 
+     *   the title bar and scroll bars), and any part of the parent window
+     *   uncovered as a result of the window being moved. When this flag is
      *   set, the application must explicitly invalidate or redraw any parts
      *   of the window and parent window that need redrawing.
      */
     int SWP_NOREDRAW = 0x0008;
-    
+
     /**
      * Same as the SWP_NOOWNERZORDER flag.
      */
     int SWP_NOREPOSITION = 0x0200;
-    
+
     /**
      * Used by User32.SetWindowPos. <br>
      * Prevents the window from receiving the WM_WINDOWPOSCHANGING message.
      */
     int SWP_NOSENDCHANGING = 0x0400;
-    
+
     /**
      * Retains the current size (ignores the cx and cy parameters).
      */
     int SWP_NOSIZE = 0x0001;
-    		
+
     /**
      * Retains the current Z order (ignores the hWndInsertAfter parameter).
      */
@@ -906,7 +904,7 @@ public interface WinUser extends WinDef {
      * Displays the window.
      */
     int SWP_SHOWWINDOW = 0x0040;
-    
+
     /**
      * Minimizes the window.
      */
@@ -2001,4 +1999,80 @@ public interface WinUser extends WinDef {
      * or 22 kHz PCM.
      */
     public int CF_WAVE = 12;
+
+
+    // WINVER >= 0x0400
+    /**
+     * The uCode parameter is a virtual-key code and is translated into a scan code.
+     * If it is a virtual-key code that does not distinguish between left- and
+     * right-hand keys, the left-hand scan code is returned. If there is no
+     * translation, the function returns 0. Used in uMapType parameter to
+     * {@link User32#MapVirtualKeyEx}
+     */
+    int MAPVK_VK_TO_VSC = 0;
+    /**
+     * The uCode parameter is a scan code and is translated into a virtual-key code
+     * that does not distinguish between left- and right-hand keys. If there is no
+     * translation, the function returns 0. Used in uMapType parameter to
+     * {@link User32#MapVirtualKeyEx}
+     */
+    int MAPVK_VSC_TO_VK = 1;
+    /**
+     * The uCode parameter is a virtual-key code and is translated into an unshifted
+     * character value in the low order word of the return value. Dead keys
+     * (diacritics) are indicated by setting the top bit of the return value. If
+     * there is no translation, the function returns 0. Used in uMapType parameter
+     * to
+     * {@link User32#MapVirtualKeyEx}
+     */
+    int MAPVK_VK_TO_CHAR = 2;
+    /**
+     * The uCode parameter is a scan code and is translated into a virtual-key code
+     * that distinguishes between left- and right-hand keys. If there is no
+     * translation, the function returns 0. Used in uMapType parameter to
+     * {@link User32#MapVirtualKeyEx}
+     */
+    int MAPVK_VSC_TO_VK_EX = 3;
+    // WINVER >= 0x0600
+    /**
+     * The uCode parameter is a virtual-key code and is translated into a scan code.
+     * If it is a virtual-key code that does not distinguish between left- and
+     * right-hand keys, the left-hand scan code is returned. If the scan code is an
+     * extended scan code, the high byte of the uCode value can contain either 0xe0
+     * or 0xe1 to specify the extended scan code. If there is no translation, the
+     * function returns 0. Used in uMapType parameter to
+     * {@link User32#MapVirtualKeyEx}
+     */
+    int MAPVK_VK_TO_VSC_EX = 4;
+
+    /**
+     * The minimum length of a keyboard layout name.
+     * {@link User32#GetKeyboardLayoutName(char[])}
+     */
+    int KL_NAMELENGTH = 9;
+
+    /**
+     * Bitmask for the SHIFT key modifier.
+     */
+    int MODIFIER_SHIFT_MASK = 1;
+    /**
+     * Bitmask for the CTRL key modifier.
+     */
+    int MODIFIER_CTRL_MASK = 2;
+    /**
+     * Bitmask for the ALT key modifier.
+     */
+    int MODIFIER_ALT_MASK = 4;
+    /**
+     * Bitmask for the HANKAKU key modifier.
+     */
+    int MODIFIER_HANKAKU_MASK = 8;
+    /**
+     * Bitmask for the RESERVED1 key modifier.
+     */
+    int MODIFIER_RESERVED1_MASK = 16;
+    /**
+     * Bitmask for the RESERVED2 key modifier.
+     */
+    int MODIFIER_RESERVED2_MASK = 32;
 }

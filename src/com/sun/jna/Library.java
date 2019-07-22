@@ -1,26 +1,28 @@
-/* The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+/*
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
 package com.sun.jna;
 
+import com.sun.jna.internal.ReflectionUtils;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -137,8 +139,18 @@ public interface Library {
             final InvocationHandler handler;
             final Function function;
             final boolean isVarArgs;
+            final Object methodHandle;
             final Map<String, ?> options;
             final Class<?>[] parameterTypes;
+
+            FunctionInfo(Object mh) {
+                this.handler = null;
+                this.function = null;
+                this.isVarArgs = false;
+                this.options = null;
+                this.parameterTypes = null;
+                this.methodHandle = mh;
+            }
 
             FunctionInfo(InvocationHandler handler, Function function, Class<?>[] parameterTypes, boolean isVarArgs, Map<String, ?> options) {
                 this.handler = handler;
@@ -146,6 +158,7 @@ public interface Library {
                 this.isVarArgs = isVarArgs;
                 this.options = options;
                 this.parameterTypes = parameterTypes;
+                this.methodHandle = null;
             }
         }
 
@@ -215,33 +228,42 @@ public interface Library {
                 synchronized(functions) {
                     f = functions.get(method);
                     if (f == null) {
-                        boolean isVarArgs = Function.isVarArgs(method);
-                        InvocationHandler handler = null;
-                        if (invocationMapper != null) {
-                            handler = invocationMapper.getInvocationHandler(nativeLibrary, method);
+                        boolean isDefault = ReflectionUtils.isDefault(method);
+                        if(! isDefault) {
+                            boolean isVarArgs = Function.isVarArgs(method);
+                            InvocationHandler handler = null;
+                            if (invocationMapper != null) {
+                                handler = invocationMapper.getInvocationHandler(nativeLibrary, method);
+                            }
+                            Function function = null;
+                            Class<?>[] parameterTypes = null;
+                            Map<String, Object> options = null;
+                            if (handler == null) {
+                                // Find the function to invoke
+                                function = nativeLibrary.getFunction(method.getName(), method);
+                                parameterTypes = method.getParameterTypes();
+                                options = new HashMap<String, Object>(this.options);
+                                options.put(Function.OPTION_INVOKING_METHOD, method);
+                            }
+                            f = new FunctionInfo(handler, function, parameterTypes, isVarArgs, options);
+                        } else {
+                            f = new FunctionInfo(ReflectionUtils.getMethodHandle(method));
                         }
-                        Function function = null;
-                        Class<?>[] parameterTypes = null;
-                        Map<String, Object> options = null;
-                        if (handler == null) {
-                            // Find the function to invoke
-                            function = nativeLibrary.getFunction(method.getName(), method);
-                            parameterTypes = method.getParameterTypes();
-                            options = new HashMap<String, Object>(this.options);
-                            options.put(Function.OPTION_INVOKING_METHOD, method);
-                        }
-                        f = new FunctionInfo(handler, function, parameterTypes, isVarArgs, options);
                         functions.put(method, f);
                     }
                 }
             }
-            if (f.isVarArgs) {
-                inArgs = Function.concatenateVarArgs(inArgs);
+            if (f.methodHandle != null) {
+                return ReflectionUtils.invokeDefaultMethod(proxy, f.methodHandle, inArgs);
+            } else {
+                if (f.isVarArgs) {
+                    inArgs = Function.concatenateVarArgs(inArgs);
+                }
+                if (f.handler != null) {
+                    return f.handler.invoke(proxy, method, inArgs);
+                }
+                return f.function.invoke(method, f.parameterTypes, method.getReturnType(), inArgs, f.options);
             }
-            if (f.handler != null) {
-                return f.handler.invoke(proxy, method, inArgs);
-            }
-            return f.function.invoke(method, f.parameterTypes, method.getReturnType(), inArgs, f.options);
         }
     }
 }

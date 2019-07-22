@@ -1,23 +1,23 @@
 /* Copyright (c) 2018 Daniel Widdis, All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -41,6 +41,10 @@ import com.sun.jna.platform.win32.COM.Wbemcli.IEnumWbemClassObject;
 import com.sun.jna.platform.win32.COM.Wbemcli.IWbemClassObject;
 import com.sun.jna.platform.win32.COM.Wbemcli.IWbemLocator;
 import com.sun.jna.platform.win32.COM.Wbemcli.IWbemServices;
+import static com.sun.jna.platform.win32.Variant.VT_ARRAY;
+import static com.sun.jna.platform.win32.Variant.VT_DISPATCH;
+import static com.sun.jna.platform.win32.Variant.VT_UNKNOWN;
+import static com.sun.jna.platform.win32.Variant.VT_VECTOR;
 import com.sun.jna.ptr.IntByReference;
 
 /**
@@ -76,7 +80,7 @@ public class WbemcliUtil {
 
         /**
          * Instantiate a WmiQuery.
-         * 
+         *
          * @param nameSpace
          *            The WMI namespace to use.
          * @param wmiClassName
@@ -271,7 +275,9 @@ public class WbemcliUtil {
          *            will always wait for results.
          *
          * @return A WmiResult object encapsulating an EnumMap which will hold
-         *         the results.
+         *         the results. Values, that are not supported by this helper
+         *         ({@code Dispatch}, {@code Unknown}, {@code SAFEARRAY}) are
+         *         not returned and reported as {@code null}.
          *
          * @throws TimeoutException
          *             if the query times out before completion
@@ -336,12 +342,20 @@ public class WbemcliUtil {
                         case Variant.VT_R8:
                             values.add(vtType, cimType, property, pVal.doubleValue());
                             break;
+                        case Variant.VT_EMPTY:
                         case Variant.VT_NULL:
                             values.add(vtType, cimType, property, null);
                             break;
                         // Unimplemented type. User must cast
                         default:
-                            values.add(vtType, cimType, property, pVal.getValue());
+                            if(((vtType & VT_ARRAY) == VT_ARRAY) ||
+                                ((vtType & VT_UNKNOWN) == VT_UNKNOWN)||
+                                ((vtType & VT_DISPATCH) == VT_DISPATCH)||
+                                ((vtType & VT_VECTOR) == VT_VECTOR)) {
+                                values.add(vtType, cimType, property, null);
+                            } else {
+                                values.add(vtType, cimType, property, pVal.getValue());
+                            }
                     }
                     OleAuto.INSTANCE.VariantClear(pVal);
                 }
@@ -383,7 +397,7 @@ public class WbemcliUtil {
          * enumerated WMI property and will be consistent for a given property,
          * and may be validated by the user using {@link #getVtType} or the
          * Class of the returned Object.
-         * 
+         *
          * @param property
          *            The property (column) to fetch
          * @param index
@@ -398,7 +412,7 @@ public class WbemcliUtil {
          * Gets the Variant type from the WmiResult. The integer value is
          * defined as a VT_* constant in the
          * {@link com.sun.jna.platform.win32.Variant} interface.
-         * 
+         *
          * @param property
          *            The property (column) whose type to fetch
          * @return An integer representing the Variant type
@@ -410,7 +424,7 @@ public class WbemcliUtil {
         /**
          * Gets the CIM type from the WmiResult. The integer value is defined as
          * a CIM_* constant in the {@link Wbemcli} interface.
-         * 
+         *
          * @param property
          *            The property (column) whose type to fetch
          * @return An integer representing the CIM type
@@ -421,7 +435,7 @@ public class WbemcliUtil {
 
         /**
          * Adds a value to the WmiResult at the next index for that property
-         * 
+         *
          * @param vtType
          *            The Variant type of this object
          * @param cimType

@@ -1,23 +1,23 @@
 /* Copyright (c) 2018 Daniel Widdis, All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -44,6 +44,9 @@ import com.sun.jna.platform.win32.COM.WbemcliUtil.WmiQuery;
 import com.sun.jna.platform.win32.COM.WbemcliUtil.WmiResult;
 import com.sun.jna.platform.win32.OleAuto;
 import com.sun.jna.ptr.IntByReference;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Test class for Wbemcli and WbemcliUti methods and classes used to query WMI.
@@ -189,6 +192,12 @@ public class WbemcliTest {
 
                 for(IWbemClassObject iwco: results) {
                     resultCount++;
+                    Set<String> names = new HashSet<String>(Arrays.asList(iwco.GetNames(null, 0, null)));
+                    assertTrue(names.contains("CommandLine"));
+                    assertTrue(names.contains("ProcessId"));
+                    assertTrue(names.contains("WorkingSetSize"));
+                    assertTrue(names.contains("ExecutionState"));
+                    assertTrue(names.contains("CreationDate"));
                     try {
                         // COMMANDLINE is STRING = VT_BSTR
                         iwco.Get("COMMANDLINE", 0, pVal, pType, plFlavor);
@@ -281,5 +290,23 @@ public class WbemcliTest {
         assertEquals(Wbemcli.CIM_BOOLEAN, os.getCIMType(OperatingSystemProperty.PRIMARY));
         assertEquals(Variant.VT_BOOL, os.getVtType(OperatingSystemProperty.PRIMARY));
         assertNotNull(os.getValue(OperatingSystemProperty.PRIMARY, 0));
+    }
+
+    enum Win32_DiskDrive_Values {
+        CAPTION,
+        CAPABILITIES
+    }
+
+    @Test
+    public void testUnsupportedValues() {
+        WmiQuery<Win32_DiskDrive_Values> serialNumberQuery = new WmiQuery<Win32_DiskDrive_Values>("Win32_DiskDrive", Win32_DiskDrive_Values.class);
+        WmiResult<Win32_DiskDrive_Values> result = serialNumberQuery.execute();
+        assertTrue(result.getResultCount() > 0);
+        for (int i = 0; i < result.getResultCount(); i++) {
+            assertNotNull(result.getValue(Win32_DiskDrive_Values.CAPTION, i));
+            // Capabilities are represented by a SAFEARRAY, this not supported
+            // in the simplified API
+            assertNull(result.getValue(Win32_DiskDrive_Values.CAPABILITIES, i));
+        }
     }
 }
